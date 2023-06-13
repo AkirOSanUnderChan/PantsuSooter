@@ -27,6 +27,8 @@ public class ActiveWeapon : MonoBehaviour
     {
         if (weapon1)
         {
+            handIk.weight = 1.0f;
+
             if (Input.GetButtonDown("Fire1"))
             {
                 AK47Sounds gg = GetComponentInChildren<AK47Sounds>();
@@ -41,7 +43,7 @@ public class ActiveWeapon : MonoBehaviour
         }
         else
         {
-            //handIk.weight = 0.0f;
+            handIk.weight = 0f;
         }
         
     }
