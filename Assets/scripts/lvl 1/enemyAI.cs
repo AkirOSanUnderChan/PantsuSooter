@@ -5,40 +5,37 @@ using UnityEngine.AI;
 
 public class enemyAI : MonoBehaviour
 {
+    public AudioClip[] passiveSounds;
+    public AudioClip[] conditionalSounds;
+    public float minTimeBetweenSounds = 1f;
+    public float maxTimeBetweenSounds = 5f;
+    private AudioSource audioSource;
+    private bool shouldPlaySounds = true;
     public int maxEnemyHP = 100;
     public int currentEnemyHP;
     public GameObject GameManager_1;
-
     public GameObject player;
     NavMeshAgent agent;
     Animator animator;
-
     public float distance;
-
     Collider theCollider;
-
     // Start is called before the first frame update
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
+        StartCoroutine(PlayPassiveSounds());
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         currentEnemyHP = maxEnemyHP;
-
     }
-
     // Update is called once per frame
     [System.Obsolete]
     void Update()
     {
-
         theCollider = GetComponent<Collider>();
-
-
-        if (currentEnemyHP >= 0)
+        if (currentEnemyHP > 0)
         {
             distance = Vector3.Distance(agent.transform.position, player.transform.position);
-
-
 
             if (distance >= 20)
             {
@@ -47,9 +44,6 @@ public class enemyAI : MonoBehaviour
                 animator.SetBool("atack", false);
                 animator.SetBool("damage", false);
                 animator.SetBool("death", false);
-
-
-
             }
             if (distance <= 19)
             {
@@ -59,9 +53,6 @@ public class enemyAI : MonoBehaviour
                 animator.SetBool("atack", false);
                 animator.SetBool("damage", false);
                 animator.SetBool("death", false);
-
-
-
             }
             if (distance <= 2)
             {
@@ -70,9 +61,6 @@ public class enemyAI : MonoBehaviour
                 animator.SetBool("atack", true);
                 animator.SetBool("damage", false);
                 animator.SetBool("death", false);
-
-
-
             }
         }
 
@@ -112,5 +100,26 @@ public class enemyAI : MonoBehaviour
             GM_1.zombieKilled++;
         }
 
+    }
+    private IEnumerator PlayPassiveSounds()
+    {
+        while (shouldPlaySounds)
+        {
+            yield return new WaitForSeconds(Random.Range(minTimeBetweenSounds, maxTimeBetweenSounds));
+            if (passiveSounds.Length > 0)
+            {
+                AudioClip soundToPlay = passiveSounds[Random.Range(0, passiveSounds.Length)];
+                audioSource.PlayOneShot(soundToPlay);
+            }
+        }
+    }
+
+    public void PlayConditionalSound()
+    {
+        if (conditionalSounds.Length > 0)
+        {
+            AudioClip soundToPlay = conditionalSounds[Random.Range(0, conditionalSounds.Length)];
+            audioSource.PlayOneShot(soundToPlay);
+        }
     }
 }
